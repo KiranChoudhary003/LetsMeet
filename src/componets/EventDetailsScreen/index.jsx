@@ -34,7 +34,7 @@ const EventDetailsScreen = ({ navigation }) => {
                 setTimeout(() => {
                     setIsLoading(false);
                     setButtonState("checkin");
-                    setIsInRange(false);  // Simulate user now being in range
+                    setIsInRange(true);  // Simulate user now being in range
                     ToastAndroid.show("Registered successfully!", ToastAndroid.SHORT);
                 }, 1000);}
         } else if (buttonState === "checkin") {

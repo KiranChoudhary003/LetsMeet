@@ -53,6 +53,7 @@ const EventCard = ({ name, organizer, date, lat, lon }) => {
     }).start();
   };
 
+
   const handlePressOut = () => {
     Animated.spring(scale, {
       toValue: 1,
@@ -78,7 +79,7 @@ const EventCard = ({ name, organizer, date, lat, lon }) => {
     const userLat = 26.9124;  // Static latitude
     const userLon = 75.7873;  // Static longitude
     const distance = calculateDistance(userLat, userLon, lat, lon);
-    setWithinRange(distance <= 0.5);
+    setWithinRange(false);//////--------->>>>>>>
   };
 
   useEffect(() => {
@@ -98,8 +99,8 @@ const EventCard = ({ name, organizer, date, lat, lon }) => {
           {checkedIn ? (
             <View style={{
               backgroundColor: '#4CAF50',
-              paddingHorizontal: 10,
-              paddingVertical: 6,
+              paddingHorizontal: 18,
+              paddingVertical: 10,
               borderRadius: 8,
               alignItems: 'center',
               justifyContent: 'center',
@@ -108,15 +109,18 @@ const EventCard = ({ name, organizer, date, lat, lon }) => {
             </View>
           ) : (
             <TouchableOpacity
-              disabled={!withinRange}
-              onPress={() => {
+            onPress={() => {
+              if (withinRange) {
                 setCheckedIn(true);
                 ToastAndroid.show("Checked-In Successfully!", ToastAndroid.SHORT);
-              }}
+              } else {
+                ToastAndroid.show("You are unable to check in", ToastAndroid.SHORT);
+              }
+            }}
               style={{
-                backgroundColor: withinRange ? '#4CAF50' : '#ccc',
-                paddingHorizontal: 10,
-                paddingVertical: 6,
+                backgroundColor: withinRange ? '#4CAF50' : '#aaa',
+                paddingHorizontal: 18,
+                paddingVertical:10,
                 borderRadius: 8,
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -137,8 +141,8 @@ const groupEventsByMonth = (events) => {
     const year = eventDate.getFullYear();
     const monthNumber = eventDate.getMonth();
     const monthName = eventDate.toLocaleString("default", { month: "long" });
-
     const key = `${year}-${monthNumber}`;
+
     if (!acc[key]) {
       acc[key] = {
         monthName,
@@ -153,6 +157,7 @@ const groupEventsByMonth = (events) => {
 
   const now = new Date();
   const currentMonthKey = `${now.getFullYear()}-${now.getMonth()}`;
+
 
   const sortedKeys = Object.keys(grouped).sort((a, b) => {
     const [yearA, monthA] = a.split("-").map(Number);
@@ -177,8 +182,11 @@ const groupEventsByMonth = (events) => {
 
 const EventsScreen = () => {
   const eventData = [
-    { name: "Tech Fest", organizer: "Static Organizer", date: "2024-03-15", lat: 26.9124, lon: 75.7873 },
-    { name: "AI Summit", organizer: "Static Organizer", date: "2024-03-21", lat: 26.9124, lon: 75.7873 },
+    { name: "Tech Fest", organizer: "GIT,jaipur", date: "2024-05-13", lat: 50.9124, lon: 75.7873 },
+    { name: "AI Summit", organizer: "codefiesta", date: "2024-04-12", lat: 26.9124, lon: 75.7873 },
+   
+      { name: "Tech Fest", organizer: "GIT,jaipur", date: "2024-05-13", lat: 26.9124, lon: 75.7873 },
+      { name: "AI Summit", organizer: "codefiesta", date: "2024-04-12", lat: 26.9124, lon: 75.7873 },
     // and so on...
   ];
   
@@ -207,17 +215,24 @@ const EventsScreen = () => {
     <ImageBackground source={backgroundImage} style={styles.background} resizeMode="cover">
       <SafeAreaView style={styles.container}>
         <View style={styles.customHeader}>
-          <TouchableOpacity onPress={() => console.log("A pressed")}>
-            <Text style={styles.headerItem}>A</Text>
-          </TouchableOpacity>
+        <View style={{ flexDirection: "row", gap: 12 }}>
+  <TouchableOpacity onPress={() => console.log("A pressed")}>
+    <Text style={styles.headerItem}>A</Text>
+  </TouchableOpacity>
+  <TouchableOpacity onPress={() => console.log("B pressed")}>
+    <Text style={styles.headerItem}>B</Text>
+  </TouchableOpacity>
+</View>
+
+          
 
           <View style={styles.headerRight}>
-            <TouchableOpacity onPress={() => console.log("B pressed")}>
-              <Text style={styles.headerItem}>B</Text>
+            <TouchableOpacity onPress={() => console.log("c pressed")}>
+              <Text style={styles.headerItem}>C</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => console.log("C pressed")}>
-              <Text style={styles.headerItem}>C</Text>
+            <TouchableOpacity onPress={() => console.log("d pressed")}>
+              <Text style={styles.headerItem}>D</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -238,7 +253,7 @@ const EventsScreen = () => {
                   key={index}
                   name={event.name}
                   organizer={event.organizer}
-                  date={new Date(event.date).toLocaleDateString()}
+                  date={new Date(event.date)}
                 />
               ))}
             </View>
