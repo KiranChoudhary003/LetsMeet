@@ -11,15 +11,50 @@ const Login = ({ navigation }) => {
 
     const [agree, setAgree] = useState(false);
     const [error, setError] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    // const handleSubmit = async () => {
+    //     if (!email || !password) {
+    //         setError('Email and Password are required');
+    //         return;
+    //     }
+
+    //     setError(''); // Reset the error
+
+    //     try {
+    //         // Construct the payload in accordance with the API documentation.
+    //         const payload = {
+    //             email: email,
+    //             password: password,
+    //         };
+
+    //         const response = await fetch('http://192.168.0.87:5000/api/user-auth/login', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify(payload),
+    //         });
+
+    //         const data = await response.json();
+
+    //         if (response.status === 200) {
+    //             // Successful login. data should contain a token and a message.
+    //                 Alert.alert('Login Successful', data.message);
+    //             // You can store the token (for example, in AsyncStorage) and navigate to another screen.
+    //             navigation.navigate('Home', { token: data.token });
+    //         } else {
+    //             setError(data.message || 'Login failed, please try again.');
+    //         }
+    //     } catch (error) {
+    //         console.error('Login error:', error);
+    //         setError("Network error, please try again.");
+    //     }
+    // };
 
     const handleSubmit = () => {
-        if (!agree) {
-            setError('You must agree to continue');
-            return;
-        }
-
-        setError('');
-        Alert.alert('Submitted!', 'Thank you for agreeing.');
+        navigation.navigate("Home")
     }
 
     return (
@@ -31,10 +66,18 @@ const Login = ({ navigation }) => {
             <TextInput
                 style={styles.input}
                 placeholder="E-mail"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={email}
+                onChangeText={setEmail}
             />
+
             <TextInput
                 style={styles.input}
                 placeholder="Password"
+                secureTextEntry
+                value={password}
+                onChangeText={setPassword}
             />
             <View style={styles.password}>
                 <View style={styles.checkContainer}>
@@ -48,7 +91,7 @@ const Login = ({ navigation }) => {
 
                 <Text style={styles.forgotPassword}>Forgot password</Text>
             </View>
-            <TouchableOpacity style={styles.button} >
+            <TouchableOpacity style={styles.button} onPress={handleSubmit} >
                 <Text style={styles.buttonText}>Log-in</Text>
             </TouchableOpacity>
             <View style={styles.signUpSection}>
@@ -84,7 +127,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         bottom: 0,
         left: 0,
-        width : "100%"
+        width: "100%"
     },
     logo: {
         width: 210,
@@ -150,10 +193,10 @@ const styles = StyleSheet.create({
     },
     signUp: {
         color: '#777',
-        fontSize : 12
+        fontSize: 12
     },
-    account : {
-        fontSize : 12,
+    account: {
+        fontSize: 12,
     }
 })
 

@@ -7,16 +7,19 @@ import ellipseBottom from '../../assets/EllipseBottom.png'
 import ellipseBottomTwo from '../../assets/EllipseBottomTwo.png'
 import { ScrollView } from 'react-native-gesture-handler';
 
-const SignUp = ({ navigation }) => {
-    const [jobRole, setJobRole] = useState('')
+const Edit = ({route, navigation}) => {
+
+    const { firstName, lastName, email, password, linkedin, jobRole, preferences } = route.params;
+
+    const [newJobRole, setNewJobRole] = useState('')
     const [visible, setVisible] = useState(false)
     const [modalVisible, setModalVisible] = useState(false)
     const [selectedRoles, setSelectedRoles] = useState([])
-    const [firstName, setFirstName] = useState('')
-    const [lastName, setLastName] = useState('')
-    const [email, setEmail] = useState('')
-    const [linkedin, setLinkedin] = useState('')
-    const [password, setPassword] = useState('')
+    const [newFirstName, setNewFirstName] = useState('')
+    const [newLastName, setNewLastName] = useState('')
+    const [newEmail, setNewEmail] = useState('')
+    const [newLinkedin, setNewLinkedin] = useState('')
+    const [newPassword, setNewPassword] = useState('')
 
     const toggleRole = (role) => {
         setSelectedRoles((prevSelectedRoles) => {
@@ -28,71 +31,9 @@ const SignUp = ({ navigation }) => {
         });
     }
 
-    const handleSubmit = async () => {
-        if (!firstName || !lastName || !email || !password || !linkedin || !jobRole || selectedRoles.length === 0) {
-            alert('All fields must be filled, including at least one preference.');
-            return;
-        }
-
-        // try {
-        //     // Prepare the payload according to the API documentation.
-        //     const payload = {
-        //         first_name: firstName,
-        //         last_name: lastName,
-        //         email: email,
-        //         password: password,
-        //         linkedin_url: linkedin,
-        //         // Assuming jobRole is either an object (with an id and label) or just a string.
-        //         role_id: typeof jobRole === 'object' ? parseInt(jobRole.id) : parseInt(jobRole),
-        //         attendees_role: typeof jobRole === 'object' ? jobRole.label : jobRole,
-        //         preference: selectedRoles, // Array of preferences
-        //     };
-
-        //     // Perform the API call using fetch.
-        //     const response = await fetch('http://192.168.0.87:5000/api/user-auth/register', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify(payload),
-        //     });
-
-        //     const data = await response.json();
-
-        //     if (response.status === 201) {
-        //         // Successful registration. Optionally, store data.userId if needed.
-        //         navigation.navigate('Profile', {
-        //             firstName,
-        //             lastName,
-        //             email,
-        //             password,
-        //             linkedin,
-        //             jobRole,
-        //             preferences: selectedRoles,
-        //             userId: data.userId, // Passing the returned userId from the API.
-        //         });
-        //     } else {
-        //         alert(data.message || 'Registration failed, please try again.');
-        //     }
-        // } catch (error) {
-        //     console.error('Registration error:', error);
-        //     alert("Error: Couldn't register. Please check your network connection.");
-        // }
-        navigation.navigate('Profile', {
-            firstName,
-            lastName,
-            email,
-            password,
-            linkedin,
-            jobRole,
-            preferences : selectedRoles
-        })
-    };
-
-
-    const removeRole = (role) => {
-        setSelectedRoles(selectedRoles.filter((r) => r !== role));
-    };
+    const handleSubmit = () => {
+        navigation.navigate('Scanner')
+    }
 
     const roles = [
         'Developer',
@@ -104,18 +45,22 @@ const SignUp = ({ navigation }) => {
         'Network Engineer',
         'IT Project Manager'
     ]
-    
+
+    const removeRole = (role) => {
+        setSelectedRoles(selectedRoles.filter((r) => r !== role));
+    }
+
     return (
         <Provider>
             <View style={styles.container}>
                 <Image source={ellipse} style={styles.ellipseTopOne} />
                 <Image source={ellipseTwo} style={styles.ellipseTopTwo} />
                 <Text style={styles.text}>Create Account</Text>
-                <TextInput style={styles.input} placeholder='First Name' value={firstName} onChangeText={setFirstName} />
-                <TextInput style={styles.input} placeholder='Last Name' value={lastName} onChangeText={setLastName} />
-                <TextInput style={styles.input} placeholder='E-mail' value={email} onChangeText={setEmail} />
-                <TextInput style={styles.input} placeholder='Create Password' value={password} onChangeText={setPassword} />
-                <TextInput style={styles.input} placeholder='LinkedIn URL' value={linkedin} onChangeText={setLinkedin} />
+                <TextInput style={styles.input} placeholder='First Name' value={firstName} onChangeText={setNewFirstName} />
+                <TextInput style={styles.input} placeholder='Last Name' value={lastName} onChangeText={setNewLastName} />
+                <TextInput style={styles.input} placeholder='E-mail' value={email} onChangeText={setNewEmail} />
+                <TextInput style={styles.input} placeholder='Create Password' value={password} onChangeText={setNewPassword} />
+                <TextInput style={styles.input} placeholder='LinkedIn URL' value={linkedin} onChangeText={setNewLinkedin} />
                 <Menu
                     visible={visible}
                     onDismiss={() => setVisible(false)}
@@ -138,7 +83,7 @@ const SignUp = ({ navigation }) => {
                         <Menu.Item
                             key={role}
                             onPress={() => {
-                                setJobRole(role);
+                                setNewJobRole(role);
                                 setVisible(false);
                             }}
                             title={role}
@@ -206,29 +151,14 @@ const SignUp = ({ navigation }) => {
                 </View>
 
                 <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                    <Text style={styles.buttonText}>Sign-in</Text>
+                    <Text style={styles.buttonText}>Save</Text>
                 </TouchableOpacity>
-                <View style={styles.condition}>
-                    <Text style={styles.agree}>By continuing you agree to all </Text>
-                    <Text style={styles.terms}>terms, condition </Text>
-                </View>
-                <View style={styles.privacy}>
-                    <Text style={styles.and}>& </Text>
-                    <Text style={styles.policy}>privacy policy</Text>
-                </View>
-                <View style={styles.account}>
-                    <Text style={styles.already}>Already have an account? </Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                        <Text style={styles.login}>log-in</Text>
-                    </TouchableOpacity>
-                </View>
-                <Image source={ellipseBottom} style={styles.ellipseBottom} />
-                <Image source={ellipseBottomTwo} style={styles.ellipseBottomTwo} />
-                <Image />
             </View>
         </Provider>
-    );
-};
+    )
+}
+
+export default Edit
 
 const styles = StyleSheet.create({
     container: {
@@ -295,44 +225,6 @@ const styles = StyleSheet.create({
         paddingLeft: 5,
     },
 
-    condition: {
-        display: 'flex',
-        flexDirection: 'row',
-        marginTop: 10
-    },
-    agree: {
-        fontSize: 12
-    },
-    terms: {
-        fontSize: 12,
-        color: "#7680DE"
-    },
-    privacy: {
-        display: 'flex',
-        flexDirection: 'row',
-        margin: 5
-    },
-    and: {
-        fontSize: 12
-    },
-    policy: {
-        fontSize: 12,
-        color: "#7680DE"
-    },
-    account: {
-        display: 'flex',
-        flexDirection: 'row',
-        position: 'relative',
-        bottom: -20,
-        left: 0
-    },
-    already: {
-        fontSize: 12
-    },
-    login: {
-        fontSize: 12,
-        color: '#777'
-    },
     selectedWrapper: {
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -402,6 +294,4 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
 
-});
-
-export default SignUp;
+})
