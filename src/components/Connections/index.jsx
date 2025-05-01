@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Entypo from 'react-native-vector-icons/Entypo';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+// import Entypo from 'react-native-vector-icons/Entypo';
+// import Ionicons from 'react-native-vector-icons/Ionicons';
 import {
     Alert,
     Animated,
@@ -282,12 +282,14 @@ const Connections = () => {
                 <View style={styles.searchContainer}>
                     <View >
                         <TouchableOpacity>
-                            <Ionicons name="arrow-back-outline" size={24} color="black" />
+                            <Image source={require('../../assets/arrow.webp')} />
+                            {/* <Ionicons name="arrow-back-outline" size={24} color="black" /> */}
                         </TouchableOpacity>
                     </View>
                     <View style={styles.searchBar}>
                         <View style={styles.lens}>
-                        <Entypo name="magnifying-glass" size={24} color="black" />
+                            {/* <Entypo name="magnifying-glass" size={24} color="black" /> */}
+                            <Image source={require('../../assets/magnifying-glass.webp')} />
                         </View>
 
                         <TextInput
@@ -299,7 +301,8 @@ const Connections = () => {
                         />
                         {search.length > 0 && (
                             <TouchableOpacity onPress={() => setSearch('')}>
-                                <Text style={styles.clearText}><Entypo name="cross" size={24} color="black" /></Text>
+                                {/* <Text style={styles.clearText}><Entypo name="cross" size={24} color="black" /></Text> */}
+                                <Text style = {styles.clearText}>X</Text>
                             </TouchableOpacity>
                         )}
                     </View>

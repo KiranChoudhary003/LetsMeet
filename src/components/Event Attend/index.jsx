@@ -1,6 +1,6 @@
 // import haversine from 'haversine';
-import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Animated, FlatList, ImageBackground, Modal, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View, Image } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {Animated, FlatList, ImageBackground, Modal, StatusBar, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View, Image } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 // import Geolocation from 'react-native-geolocation-service';
 // import { PERMISSIONS, RESULTS, check, openSettings, request } from 'react-native-permissions';
@@ -48,7 +48,7 @@ const EventAttend = () => {
     const [toastQueue, setToastQueue] = useState([]);
     const [currentToast, setCurrentToast] = useState('');
     // const eventProximityRef = useRef(eventProximity);
-    const lastToastState = useRef({});
+    // const lastToastState = useRef({});
 
 
 
@@ -272,12 +272,12 @@ const EventAttend = () => {
         setShowFilters(false);
     };
 
-    const isToday = (eventDate) => {
-        const [month, day, year] = eventDate.split('-');
-        const eventDateObj = new Date(`${year}-${month}-${day}`);
-        const currentDate = new Date();
-        return eventDateObj.toDateString() === currentDate.toDateString();
-    };
+    // const isToday = (eventDate) => {
+    //     const [month, day, year] = eventDate.split('-');
+    //     const eventDateObj = new Date(`${year}-${month}-${day}`);
+    //     const currentDate = new Date();
+    //     return eventDateObj.toDateString() === currentDate.toDateString();
+    // };
 
     // const getCheckinButtonStyle = (isNearby, isEventToday) => ({
     //     opacity: (isNearby === false || !isEventToday) ? 0.3 : 1,
