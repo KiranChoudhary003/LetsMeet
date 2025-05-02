@@ -1,5 +1,5 @@
-import React, { use, useState } from 'react';
-import { Button, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native';
 import { Checkbox, IconButton, Menu, Modal, Provider } from 'react-native-paper';
 import ellipse from '../../assets/Ellipse.png'
 import ellipseTwo from '../../assets/EllipseTwo.png'
@@ -34,59 +34,59 @@ const SignUp = ({ navigation }) => {
             return;
         }
 
-        // try {
-        //     // Prepare the payload according to the API documentation.
-        //     const payload = {
-        //         first_name: firstName,
-        //         last_name: lastName,
-        //         email: email,
-        //         password: password,
-        //         linkedin_url: linkedin,
-        //         // Assuming jobRole is either an object (with an id and label) or just a string.
-        //         role_id: typeof jobRole === 'object' ? parseInt(jobRole.id) : parseInt(jobRole),
-        //         attendees_role: typeof jobRole === 'object' ? jobRole.label : jobRole,
-        //         preference: selectedRoles, // Array of preferences
-        //     };
+        try {
+            // Prepare the payload according to the API documentation.
+            const payload = {
+                first_name: firstName,
+                last_name: lastName,
+                email: email,
+                password: password,
+                linkedin_url: linkedin,
+                // Assuming jobRole is either an object (with an id and label) or just a string.
+                role_id: typeof jobRole === 'object' ? parseInt(jobRole.id) : parseInt(jobRole),
+                attendees_role: typeof jobRole === 'object' ? jobRole.label : jobRole,
+                preference: selectedRoles, // Array of preferences
+            };
 
-        //     // Perform the API call using fetch.
-        //     const response = await fetch('http://192.168.0.87:5000/api/user-auth/register', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify(payload),
-        //     });
+            // Perform the API call using fetch.
+            const response = await fetch('https://letsmeet-backend-47lv.onrender.com/api/user-auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload),
+            });
 
-        //     const data = await response.json();
+            const data = await response.json();
 
-        //     if (response.status === 201) {
-        //         // Successful registration. Optionally, store data.userId if needed.
-        //         navigation.navigate('Profile', {
-        //             firstName,
-        //             lastName,
-        //             email,
-        //             password,
-        //             linkedin,
-        //             jobRole,
-        //             preferences: selectedRoles,
-        //             userId: data.userId, // Passing the returned userId from the API.
-        //         });
-        //     } else {
-        //         alert(data.message || 'Registration failed, please try again.');
-        //     }
-        // } catch (error) {
-        //     console.error('Registration error:', error);
-        //     alert("Error: Couldn't register. Please check your network connection.");
-        // }
-        navigation.navigate('Profile', {
-            firstName,
-            lastName,
-            email,
-            password,
-            linkedin,
-            jobRole,
-            preferences : selectedRoles
-        })
+            if (response.status === 201) {
+                // Successful registration. Optionally, store data.userId if needed.
+                navigation.navigate('Profile', {
+                    firstName,
+                    lastName,
+                    email,
+                    password,
+                    linkedin,
+                    jobRole,
+                    preferences: selectedRoles,
+                    userId: data.userId, // Passing the returned userId from the API.
+                });
+            } else {
+                alert(data.message || 'Registration failed, please try again.');
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            alert("Error: Couldn't register. Please check your network connection.");
+        }
+        // navigation.navigate('Profile', {
+        //     firstName,
+        //     lastName,
+        //     email,
+        //     password,
+        //     linkedin,
+        //     jobRole,
+        //     preferences : selectedRoles
+        // })
     };
 
 

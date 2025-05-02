@@ -13,7 +13,7 @@ const Profile = ({ route, navigation}) => {
   console.log('firstname', firstName)
 
   const handleNext = () => {
-    navigation.navigate("QRCode" , {
+    navigation.navigate("Home" , {
       firstName,
       lastName,
       email,

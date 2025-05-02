@@ -14,48 +14,48 @@ const Login = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    // const handleSubmit = async () => {
-    //     if (!email || !password) {
-    //         setError('Email and Password are required');
-    //         return;
-    //     }
+    const handleSubmit = async () => {
+        if (!email || !password) {
+            setError('Email and Password are required');
+            return;
+        }
 
-    //     setError(''); // Reset the error
+        setError(''); // Reset the error
 
-    //     try {
-    //         // Construct the payload in accordance with the API documentation.
-    //         const payload = {
-    //             email: email,
-    //             password: password,
-    //         };
+        try {
+            // Construct the payload in accordance with the API documentation.
+            const payload = {
+                email: email,
+                password: password,
+            };
 
-    //         const response = await fetch('http://192.168.0.87:5000/api/user-auth/login', {
-    //             method: 'POST',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //             body: JSON.stringify(payload),
-    //         });
+            const response = await fetch('https://letsmeet-backend-47lv.onrender.com/api/user-auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
 
-    //         const data = await response.json();
+            const data = await response.json();
 
-    //         if (response.status === 200) {
-    //             // Successful login. data should contain a token and a message.
-    //                 Alert.alert('Login Successful', data.message);
-    //             // You can store the token (for example, in AsyncStorage) and navigate to another screen.
-    //             navigation.navigate('Home', { token: data.token });
-    //         } else {
-    //             setError(data.message || 'Login failed, please try again.');
-    //         }
-    //     } catch (error) {
-    //         console.error('Login error:', error);
-    //         setError("Network error, please try again.");
-    //     }
-    // };
+            if (response.status === 200) {
+                // Successful login. data should contain a token and a message.
+                    // Alert.alert('Login Successful', data.message);
+                // You can store the token (for example, in AsyncStorage) and navigate to another screen.
+                navigation.navigate('Home', { token: data.token });
+            } else {
+                setError(data.message || 'Login failed, please try again.');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            setError("Network error, please try again.");
+        }
+    };
 
-    const handleSubmit = () => {
-        navigation.navigate("Home")
-    }
+    // const handleSubmit = () => {
+    //     navigation.navigate("Home")
+    // }
 
     return (
         <View style={styles.container}>

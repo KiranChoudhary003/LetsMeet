@@ -13,6 +13,9 @@ import Edit from './src/components/Edit/index.jsx'
 import Description from './src/components/Description/index.jsx'
 import MyEvents from './src/components/MyEvents/index.jsx'
 import EventAttend from './src/components/EventAttend/index.jsx'
+import Connection from './src/components/Connection/index.jsx'
+import CheckedInDescription from './src/components/CheckedInDescription/index.jsx'
+import UserProfile from './src/components/UserProfile/index.jsx'
 
 const Stack = createStackNavigator()
 
@@ -27,6 +30,7 @@ const App = () => {
         <Stack.Screen name="Login" component = {Login} />
         <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name='Profile' component={Profile} />
+        <Stack.Screen name='UserProfile' component={UserProfile} />
         <Stack.Screen name='QRCode' component={QRCodeScreen} />
         <Stack.Screen name='Scanner' component={Scanner} />
         <Stack.Screen name='Home' component={Home} />
@@ -34,6 +38,8 @@ const App = () => {
         <Stack.Screen name='Description' component={Description} />
         <Stack.Screen name='MyEvents' component={MyEvents} />
         <Stack.Screen name='EventAttend' component={EventAttend} />
+        <Stack.Screen name='Connection' component={Connection} />
+        <Stack.Screen name='CheckInDescription' component={CheckedInDescription} />
       </Stack.Navigator>
     </NavigationContainer>
   )

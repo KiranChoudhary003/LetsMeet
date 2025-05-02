@@ -1,15 +1,9 @@
-import haversine from 'haversine';
-import React, { useEffect, useRef, useState } from 'react';
-import { Alert, Animated, FlatList, ImageBackground, Modal, Platform, StatusBar, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {Animated, FlatList, ImageBackground, Modal, StatusBar, StyleSheet, Text, TouchableOpacity, TouchableWithoutFeedback, View, Image } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-import Geolocation from 'react-native-geolocation-service';
-import { PERMISSIONS, RESULTS, check, openSettings, request } from 'react-native-permissions';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import LottieView from 'lottie-react-native';
 
 const events = [
-    { id: 1, name: 'Tech Conference', location: 'Jaipur, Rajasthan', date: '04-26-2025', latitude: 26.9124, longitude: 75.7873 },
+    { id: 1, name: 'Tech Conference', location: 'Jaipur, Rajasthan', date: '05-01-2025', latitude: 26.9124, longitude: 75.7873 },
     { id: 2, name: 'Marketing Summit', location: 'Jodhpur, Rajasthan', date: '04-26-2025', latitude: 26.2389, longitude: 73.0243 },
     { id: 3, name: 'AI Expo', location: 'Udaipur, Rajasthan', date: '04-28-2025', latitude: 24.5854, longitude: 73.7125 },
     { id: 4, name: 'Developer Meetup', location: 'Ajmer, Rajasthan', date: '04-25-2025', latitude: 26.4499, longitude: 74.6399 },
@@ -26,7 +20,7 @@ const events = [
     { id: 15, name: 'UX/UI Design Day', location: 'Pali, Rajasthan', date: '04-29-2025', latitude: 25.7725, longitude: 73.3234 },
 ];
 
-const EventAttend = () => {
+const EventAttend = ({navigation}) => {
     const [selectedFilter, setSelectedFilter] = useState('Global');
     const [showFilters, setShowFilters] = useState(false);
     const [showCheckin, setCheckin] = useState(false);
@@ -37,13 +31,8 @@ const EventAttend = () => {
     const [attendedEvents, setAttendedEvents] = useState({});
     const [toast, setToast] = useState('');
     const [fadeAnim] = useState(new Animated.Value(0));
-    const [userLocation, setUserLocation] = useState(null);
-    const [eventProximity, setEventProximity] = useState({});
-    const [initialProximityNotified, setInitialProximityNotified] = useState({});
     const [toastQueue, setToastQueue] = useState([]);
     const [currentToast, setCurrentToast] = useState('');
-    const eventProximityRef = useRef(eventProximity);
-    const lastToastState = useRef({});
 
     useEffect(() => {
         if (!currentToast && toastQueue.length > 0) {
@@ -77,159 +66,21 @@ const EventAttend = () => {
         }
     }, [toast]);
 
-    // loaction tracker of the user
-    useEffect(() => {
-        const requestLocation = async () => {
-            try {
-                let permissionStatus;
-
-                if (Platform.OS === 'android') {
-                    permissionStatus = await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-
-                    if (permissionStatus === RESULTS.DENIED) {
-                        permissionStatus = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-                    }
-
-                    if (permissionStatus === RESULTS.BLOCKED) {
-                        Alert.alert(
-                            'Location Permission Required',
-                            'Please enable location access from settings to use this feature.',
-                            [
-                                { text: 'Cancel', style: 'cancel' },
-                                { text: 'Open Settings', onPress: () => openSettings() },
-                            ]
-                        );
-                        return;
-                    }
-
-                    if (permissionStatus !== RESULTS.GRANTED) {
-                        setToast('Location permission not granted.');
-                        return;
-                    }
-                }
-
-                if (Platform.OS === 'ios') {
-                    permissionStatus = await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-
-                    if (permissionStatus === RESULTS.DENIED) {
-                        permissionStatus = await request(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE);
-                    }
-
-                    if (permissionStatus === RESULTS.BLOCKED) {
-                        Alert.alert(
-                            'Location Permission Required',
-                            'Please enable location access from settings to use this feature.',
-                            [
-                                { text: 'Cancel', style: 'cancel' },
-                                { text: 'Open Settings', onPress: () => openSettings() },
-                            ]
-                        );
-                        return;
-                    }
-
-                    if (permissionStatus !== RESULTS.GRANTED) {
-                        setToast('Location permission not granted.');
-                        return;
-                    }
-                }
-
-                // If permission granted, fetch current location
-                Geolocation.getCurrentPosition(
-                    (position) => {
-                        const { latitude, longitude } = position.coords;
-                        setUserLocation({ latitude, longitude });
-                        // setToast(`User location: Latitude: ${latitude}, Longitude: ${longitude}`);
-                    },
-                    (error) => {
-                        setToast('Failed to fetch location. Please try again.');
-                    },
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 15000,
-                        maximumAge: 10000,
-                        forceRequestLocation: true,
-                        showLocationDialog: true,
-                    }
-                );
-            } catch (error) {
-                setToast('Error occurred while requesting location.');
-                console.error(error);
-            }
-        };
-
-        requestLocation();
-    }, []);
-
-
-
-    useEffect(() => {
-        eventProximityRef.current = eventProximity;
-    }, [eventProximity]);
-
-
-    // check in distance calculator
-    useEffect(() => {
-        if (userLocation) {
-            const updatedProximity = { ...eventProximityRef.current };
-            const updatedToastState = { ...lastToastState.current };
-
-            events.forEach((event) => {
-                const eventId = event.id;
-                if (attendedEvents[eventId]) {
-                    const isNearby = isWithinRadius(userLocation, {
-                        latitude: event.latitude,
-                        longitude: event.longitude,
-                    });
-
-                    const previousState = updatedToastState[eventId];
-                    const [month, day, year] = event.date.split('-');
-                    const eventDate = new Date(`${year}-${month}-${day}`);
-                    const isEventToday = isSameDate(eventDate, new Date());
-
-                    if (isEventToday) {
-                        if (isNearby && previousState === undefined && !initialProximityNotified[eventId]) {
-                            setToast(`You're near "${event.name}" Event. You can now check in!`);
-                            setInitialProximityNotified(prev => ({ ...prev, [eventId]: true }));
-                        } else if (previousState !== isNearby) {
-                            if (isNearby) {
-                                setToast(`You're near "${event.name}" Event. You can now check in!`);
-                            } else {
-                                setToast(`Check-in is only available when you are near the "${event.name}" event.`);
-                            }
-                        }
-                    }
-
-                    updatedProximity[eventId] = { isNearby };
-                    updatedToastState[eventId] = isNearby;
-                }
-            });
-
-            setEventProximity(updatedProximity);
-            lastToastState.current = updatedToastState;
-        }
-    }, [userLocation, attendedEvents, initialProximityNotified]);
-
-    const isWithinRadius = (userLoc, eventLoc) => {
-        const distance = haversine(userLoc, eventLoc, { unit: 'km' });
-        const RADIUS_KM = 115;
-        return distance <= RADIUS_KM;
-    };
-
-    const isWithinFilterRadius = (userLoc, eventLoc) => {
-        const distance = haversine(userLoc, eventLoc, { unit: 'km' });
-        const RADIUS_KM = 150;
-        return distance <= RADIUS_KM;
-    };
-
     const handleCheckIn = (eventId) => {
         setAttendedEvents((prev) => ({ ...prev, [eventId]: true }));
         setCheckin(true);
+
+        // Auto-close the check-in modal after 2 seconds
+        setTimeout(() => {
+            setCheckin(false);
+        }, 2000);
     };
 
     const handleAttend = (id, name) => {
         setAttendedEvents(prev => ({ ...prev, [id]: true }));
         setToast(`Event ${name} Registered Successfully`);
     };
+
 
     const formatDate = (date) => {
         const mm = String(date.getMonth() + 1).padStart(2, '0');
@@ -254,9 +105,6 @@ const EventAttend = () => {
         if (selectedFilter === 'Today') { return isSameDate(eventDate, today); }
         if (selectedFilter === 'Tomorrow') { return isSameDate(eventDate, tomorrow); }
         if (selectedFilter === 'Choose from Calendar' && customDate) { return isSameDate(eventDate, customDate); }
-        if (selectedFilter === 'Near Me' && userLocation) {
-            return isWithinFilterRadius(userLocation, { latitude, longitude });
-        }
         return selectedFilter === 'Global';
     });
 
@@ -269,19 +117,11 @@ const EventAttend = () => {
         setShowFilters(false);
     };
 
-    const isToday = (eventDate) => {
-        const [month, day, year] = eventDate.split('-');
-        const eventDateObj = new Date(`${year}-${month}-${day}`);
-        const currentDate = new Date();
-        return eventDateObj.toDateString() === currentDate.toDateString();
-    };
-
-    const getCheckinButtonStyle = (isNearby, isEventToday) => ({
-        opacity: (isNearby === false || !isEventToday) ? 0.3 : 1,
-        backgroundColor: (isNearby === false || !isEventToday) ? 'gray' : 'transparent',
-        borderColor: (isNearby === false || !isEventToday) ? 'gray' : 'rgba(157, 9, 11, 0.96)',
-    });
-
+    const getCheckinButtonStyle = () => ({
+        opacity: 1,
+        backgroundColor: 'transparent',
+        borderColor: 'rgba(157, 9, 11, 0.96)',
+    })
 
     return (
         <ImageBackground source={require('../../assets/Event-check-in-page.webp')} style={styles.fullFlex}>
@@ -291,8 +131,8 @@ const EventAttend = () => {
                 {/* Header */}
                 <View style={styles.headingContainer}>
                     <View>
-                        <TouchableOpacity style={styles.arrow}>
-                            <Ionicons name="arrow-back-outline" size={24} color="black" />
+                        <TouchableOpacity style={styles.arrow} onPress={() => navigation.goBack()}>
+                            <Image source={require('../../assets/arrow.jpg')} />
                         </TouchableOpacity>
                     </View>
                     <View style={styles.titleContainer}>
@@ -327,7 +167,8 @@ const EventAttend = () => {
                             <View style={styles.filterContainer}>
                                 <Text style={styles.filterButtonText}>Filter</Text>
                                 <View style={styles.filterIcon}>
-                                    <Ionicons name="filter" size={16} color="black" />
+                                    <Image style={styles.filterImage} source={require('../../assets/dropdown.jpg')} />
+
                                 </View>
                             </View>
                         </TouchableOpacity>
@@ -349,7 +190,9 @@ const EventAttend = () => {
                         >
                             <TouchableWithoutFeedback>
                                 <View style={styles.filterOptions}>
-                                    {['Global', 'Today', 'Tomorrow', 'Choose from Calendar', 'Near Me'].map((option) => (
+                                    {['Global', 'Today', 'Tomorrow', 'Choose from Calendar',
+                                    //  'Near Me'
+                                    ].map((option) => (
                                         <TouchableOpacity
                                             key={option}
                                             style={[styles.filterOption, selectedFilter === option && styles.filterActive]}
@@ -375,14 +218,6 @@ const EventAttend = () => {
                         <View style={styles.checkinModalOverlay}>
                             <View style={styles.checkinmodalContent}>
                                 <Text style={styles.checkinmodalText}>Check-in Successful!</Text>
-                                <LottieView
-                                    style={styles.lottieContainer}
-                                    source={require('../../assets/checkBox-tick.json')}
-                                    autoPlay
-                                    loop={false}
-                                    resizeMode="cover"
-                                    onAnimationFinish={() => { setCheckin(false); }}
-                                />
                             </View>
                         </View>
                     </Modal>
@@ -462,11 +297,15 @@ const EventAttend = () => {
                                     <View style={styles.eventDetails}>
                                         <Text style={styles.eventTitle} numberOfLines={1} ellipsizeMode="tail">{item.name}</Text>
                                         <View style={styles.locationContainer}>
-                                            <Ionicons name="location" size={14} color="black" />
+                                            <Image
+                                                style={styles.locationIcon}
+                                                source={require('../../assets/location-icon.webp')}
+                                            />
+                                            {/* <Ionicons name="location" size={14} color="black" /> */}
                                             <Text style={styles.eventLocation}>{item.location}</Text>
                                         </View>
                                         <View style={styles.dateContainer}>
-                                            <MaterialCommunityIcons name="calendar-today" size={14} color="black" />
+                                            {/* <MaterialCommunityIcons name="calendar-today" size={14} color="black" /> */}
                                             <Text style={styles.eventDate}>{item.date}</Text>
                                         </View>
                                     </View>
@@ -479,31 +318,21 @@ const EventAttend = () => {
                                                 <Text style={styles.attendText}>Register</Text>
                                             </TouchableOpacity>
                                         )}
-                                        {attendedEvents[item.id] && userLocation && (
+
+                                        {attendedEvents[item.id] && (
                                             <Animated.View
-                                                style={[styles.checkinButton, getCheckinButtonStyle(
-                                                    eventProximity[item.id]?.isNearby,
-                                                    isToday(item.date)
-                                                )]}
+                                                style={[styles.checkinButton, getCheckinButtonStyle()]} // Updated style
                                             >
                                                 <TouchableOpacity
                                                     onPress={() => {
-                                                        const eventName = item.name;
-                                                        if (!isToday(item.date) && eventProximity[item.id]?.isNearby === false) {
-                                                            setToast('Check-in will be enabled on the day of the event and when you are near the event location.');
-                                                        } else if (!isToday(item.date)) {
-                                                            setToast('Check-in will be available on the event date.');
-                                                        } else if (eventProximity[item.id]?.isNearby === false) {
-                                                            setToast(`Check-in is only available when you are near the "${eventName}" event.`);
-                                                        } else {
-                                                            handleCheckIn(item.id, eventName);
-                                                        }
+                                                        handleCheckIn(item.id);
                                                     }}
                                                 >
                                                     <Text style={styles.checkinText}>Check in</Text>
                                                 </TouchableOpacity>
                                             </Animated.View>
                                         )}
+
                                     </View>
                                 </View>
                             </View>
@@ -569,7 +398,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         marginTop: 30,
     },
-    eventDetails: { flexDirection: 'column',alignItems: 'flex-start'},
+    eventDetails: { flexDirection: 'column', alignItems: 'flex-start' },
     eventTitle: {
         fontSize: 16,
         fontWeight: '600',
@@ -579,15 +408,15 @@ const styles = StyleSheet.create({
     locationContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap:1,
+        gap: 1,
     },
-    dateContainer:{
+    dateContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap:1,
+        gap: 1,
     },
     eventLocation: { fontSize: 14, color: '#333' },
-    eventDate: { fontSize: 14, color: '#333'},
+    eventDate: { fontSize: 14, color: '#333' },
     rightButtons: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -745,23 +574,5 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: 'rgba(157, 9, 11, 0.96)', // Premium-looking color
     },
-    lottieContainer: {
-        height: 200,
-        width: 200,
-    },
+    locationIcon: { width: 14, height: 14 },
 });
-
-// import React from 'react'
-// import { Text, View } from 'react-native'
-
-// const EventAttend = () => {
-//   return (
-//     <View>
-//         <Text>
-//             hello
-//         </Text>
-//     </View>
-//   )
-// }
-
-// export default EventAttend
