@@ -316,9 +316,7 @@ const EventAttend = () => {
         backgroundColor: isCheckedIn ? 'green' : (!isNearby || !isEventToday) ? 'gray' : 'transparent',
         borderColor: (!isNearby || !isEventToday || isCheckedIn) ? 'gray' : 'rgba(157, 9, 11, 0.96)',
     });
-
-
-
+// return start 
     return (
         <ImageBackground source={require('../../assets/Event-check-in-page.webp')} style={styles.fullFlex}>
             <View style={styles.container}>
