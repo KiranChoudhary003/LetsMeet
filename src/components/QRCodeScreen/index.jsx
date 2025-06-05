@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Share, Image } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 // import { useNavigation } from '@react-navigation/native';
@@ -6,30 +6,49 @@ import ellipse from '../../assets/qrcodeFirst.png'
 import ellipseTwo from '../../assets/qrcodetwo.png'
 import ellipseBottom from '../../assets/qrcodethree.png'
 import ellipseBottomTwo from '../../assets/qrcodefour.png'
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import scanner from '../../assets/vector.png'
 
-const QRCodeScreen = ({ route, navigation }) => {
+const QRCodeScreen = ({ navigation }) => {
 
-  const {
-    firstName,
-    lastName,
-    email,
-    password,
-    linkedin,
-    jobRole,
-    preferences
-  } = route.params;
+  const [userData, setUserData] = useState({})
 
-  const userData = {
-    firstName,
-    lastName,
-    email,
-    password,
-    linkedin,
-    jobRole,
-    preferences: Array.isArray(preferences) ? preferences.join(', ') : preferences,
-  };
+  useEffect(() => {
+    const fetchUserData = async () => {
+      console.log("User Data:", userData);
 
-  const qrValue = JSON.stringify(userData);
+      try {
+        console.log("Sending request to login API...");
+        const token = await AsyncStorage.getItem('token')
+        console.log("Token from AsyncStorage:", token);
+        const response = await axios.get(`https://difficulties-machinery-editorials-advertisements.trycloudflare.com/api/user-profile`, {
+          headers: {
+            'Content-Type': "application/json",
+            'Authorization': `Bearer ${token}`
+          }
+        }
+        )
+        console.log("Login successful, token received:", response.data.token); // ✅ Debug
+
+        const user = response.data.user
+
+        setUserData({
+          firstName: user.first_name,
+          lastName: user.last_name,
+          email: user.email,
+          linkedin: user.linkedin_url,
+          jobRole: user.attendees_role,
+          preferences: Array.isArray(user.preference) ? user.preference.join(', ') : 'None',
+        })
+      } catch (error) {
+        console.log(`Error fetching the user data ${error}`)
+      }
+    }
+    fetchUserData()
+  }, [])
+
+  const qrValue = userData ? JSON.stringify(userData) : '';
 
   const handleShare = async () => {
     try {
@@ -45,13 +64,16 @@ const QRCodeScreen = ({ route, navigation }) => {
     <View style={styles.container}>
       <Image source={ellipse} style={styles.ellipseTopOne} />
       <Image source={ellipseTwo} style={styles.ellipseTopTwo} />
+      <Image source={ellipseBottom} style={styles.ellipseBottomTwo} />
+      <Image source={ellipseBottomTwo} style={styles.ellipseBottom} />
       {/* Top Navigation */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.headerBackText}>Back</Text>
+          <Text style={styles.headerBackText}>←</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Scanner')}>
-          <Text style={styles.headerTitle}>Scan</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Scanner')} style={styles.headerTitle}>
+          <Image source={scanner} />
+          <Text style={{ fontSize: 20, paddingLeft: 10 }}>Scan</Text>
         </TouchableOpacity>
         <View style={{ width: 24 }} /> {/* Placeholder to center title */}
       </View>
@@ -60,7 +82,11 @@ const QRCodeScreen = ({ route, navigation }) => {
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Scan QR</Text>
         <View style={styles.qrBox}>
-          <QRCode value={qrValue} size={180} />
+          {userData ? (
+            <QRCode value={qrValue} size={180} />
+          ) : (
+            <Text style={{ color: '#fff' }}>Loading...</Text>
+          )}
         </View>
 
         <View style={styles.buttonRow}>
@@ -73,8 +99,6 @@ const QRCodeScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
-      <Image source={ellipseBottom} style={styles.ellipseBottomTwo} />
-      <Image source={ellipseBottomTwo} style={styles.ellipseBottom} />
     </View>
   );
 };
@@ -97,13 +121,26 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    display: "flex",
+    flexDirection: "row",
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    padding: 10,
+    borderRadius: 10,
+    alignItems: "center",
+    position: "fixed",
+    top: -10,
+    right: -140,
   },
   headerBackText: {
-    fontSize: 16,
+    fontSize: 35,
+    fontWeight: "bold",
     color: '#000',
+    position: "fixed",
+    top: -35,
+    left: -130,
   },
   card: {
-    marginTop: 60,
+    marginTop: 100,
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     borderRadius: 20,
     padding: 20,

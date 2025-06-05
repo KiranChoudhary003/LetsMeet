@@ -1,58 +1,106 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import profile from '../../assets/profile.png'
 import ellipse from '../../assets/Ellipse.png'
 import ellipseBottom from '../../assets/EllipseBottom.png'
 import ellipseTwo from '../../assets/EllipseTwo.png'
 import ellipseBottomTwo from '../../assets/EllipseBottomTwo.png'
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
-const UserProfile = ({ route, navigation }) => {
+const UserProfile = ({ navigation }) => {
 
-    const { firstName, lastName, email, password, linkedin, jobRole, preferences } = route.params;
+    const [userProfile, setUserProfile] = useState({})
+
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            console.log("User Profile:", userProfile);
+
+            try {
+                const token = await AsyncStorage.getItem('token');
+                const response = await axios.get(`https://difficulties-machinery-editorials-advertisements.trycloudflare.com/api/user-profile`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                })
+                console.log("Profile Data:", response.data);
+                const data = response.data
+
+                setUserProfile(data.user)
+            } catch (error) {
+                console.error(`Error in fetching: ${error}`);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchProfileData()
+    }, [])
+
+    const handleLogout = async () => {
+        try {
+            await AsyncStorage.removeItem('token')
+            navigation.replace('Login')
+        } catch (error) {
+            console.log(`Error In Logout`)
+        }
+    }
 
     return (
         <View style={styles.container}>
             <Image source={ellipse} style={styles.ellipseTop} />
             <Image source={ellipseTwo} style={styles.ellipseTop} />
+            <Image source={ellipseBottom} style={styles.ellipseBottom} />
+            <Image source={ellipseBottomTwo} style={styles.ellipseBottomTwo} />
             <TouchableOpacity onPress={() => navigation.goBack()}>
                 <Text style={styles.backArrow}>←</Text>
             </TouchableOpacity>
-            <Image source={profile} alt='Profile' style={styles.profile} />
+            <Image
+                source={
+                    userProfile.photo
+                        ? {
+                            uri: userProfile.photo.startsWith('http')
+                                ? userProfile.photo
+                                : `https://difficulties-machinery-editorials-advertisements.trycloudflare.com/${userProfile.photo}`
+                        }
+                        : profile // fallback to default image
+                }
+                style={styles.profile}
+            />
             <View style={styles.user}>
                 <View style={styles.userDetails}>
                     <Text style={styles.data}>First Name :</Text>
-                    <Text style={styles.details}> {firstName}</Text>
+                    <Text style={styles.details}> {userProfile.first_name}</Text>
                 </View>
                 <View style={styles.userDetails}>
                     <Text style={styles.data}>Last Name :</Text>
-                    <Text style={styles.details}> {lastName}</Text>
+                    <Text style={styles.details}> {userProfile.last_name}</Text>
                 </View>
                 <View style={styles.userDetails}>
                     <Text style={styles.data}>E-mail :</Text>
-                    <Text style={styles.details}> {email}</Text>
-                </View>
-                <View style={styles.userDetails}>
-                    <Text style={styles.data}>Password :</Text>
-                    <Text style={styles.details}> {password}</Text>
+                    <Text style={styles.details}> {userProfile.email}</Text>
                 </View>
                 <View style={styles.userDetails}>
                     <Text style={styles.data}>LinkedIn URL :</Text>
-                    <Text style={styles.url}> {linkedin}</Text>
+                    <Text style={styles.url}> {userProfile.linkedin_url}</Text>
                 </View>
                 <View style={styles.userDetails}>
                     <Text style={styles.data}>Role :</Text>
-                    <Text style={styles.details}> {jobRole}</Text>
+                    <Text style={styles.details}> {userProfile.attendees_role}</Text>
                 </View>
                 <View style={styles.userDetails}>
                     <Text style={styles.data}>Preferences : </Text>
                     <Text style={styles.details}>
-                        {preferences && preferences.length > 0 ? preferences.join(', ') : 'None'}
+                        {userProfile.preference && userProfile.preference.length > 0
+                            ? userProfile.preference.join(', ')
+                            : 'None'}
                     </Text>
                 </View>
+                <TouchableOpacity onPress={handleLogout}>
+                    <Text style={styles.logout}>Logout</Text>
+                </TouchableOpacity>
             </View>
-            <Image source={ellipseBottom} style={styles.ellipseBottom} />
-            <Image source={ellipseBottomTwo} style={styles.ellipseBottomTwo} />
-        </View>
+        </View >
     )
 }
 
@@ -123,8 +171,25 @@ const styles = StyleSheet.create({
         top: 310,
         left: 0
     },
-    backArrow: { 
-        fontSize: 35, marginRight: 15 },
+    backArrow: {
+        fontSize: 35,
+        fontWeight: "bold",
+        marginRight: 15,
+        marginTop: 30,
+    },
+    logout : {
+        width : 120,
+        height : 50,
+        backgroundColor : '#7680DE',
+        color : "white",
+        fontSize : 20,
+        borderRadius : 20,
+        textAlign : "center",
+        paddingTop : 10,
+        position : 'sticky',
+        left : "37%",
+        bottom : -50
+    }
 
 })
 export default UserProfile

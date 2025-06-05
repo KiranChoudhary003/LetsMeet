@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native';
 import { Checkbox, IconButton, Menu, Modal, Provider } from 'react-native-paper';
 import ellipse from '../../assets/Ellipse.png'
@@ -6,6 +6,7 @@ import ellipseTwo from '../../assets/EllipseTwo.png'
 import ellipseBottom from '../../assets/EllipseBottom.png'
 import ellipseBottomTwo from '../../assets/EllipseBottomTwo.png'
 import { ScrollView } from 'react-native-gesture-handler';
+import axios from 'axios';
 
 const SignUp = ({ navigation }) => {
     const [jobRole, setJobRole] = useState('')
@@ -17,6 +18,8 @@ const SignUp = ({ navigation }) => {
     const [email, setEmail] = useState('')
     const [linkedin, setLinkedin] = useState('')
     const [password, setPassword] = useState('')
+    const [roles, setRoles] = useState([])
+    const [loadingRoles, setLoadingRoles] = useState(true)
 
     const toggleRole = (role) => {
         setSelectedRoles((prevSelectedRoles) => {
@@ -47,15 +50,16 @@ const SignUp = ({ navigation }) => {
                 attendees_role: typeof jobRole === 'object' ? jobRole.label : jobRole,
                 preference: selectedRoles, // Array of preferences
             };
-
+            console.log(`Api is fetchinng`)
             // Perform the API call using fetch.
-            const response = await fetch('https://letsmeet-backend-47lv.onrender.com/api/user-auth/register', {
+            const response = await fetch('https://classification-concept-quit-announces.trycloudflare.com/api/user-profile/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(payload),
             });
+            console.log(`API successfully fetch`)
 
             const data = await response.json();
 
@@ -78,15 +82,6 @@ const SignUp = ({ navigation }) => {
             console.error('Registration error:', error);
             alert("Error: Couldn't register. Please check your network connection.");
         }
-        // navigation.navigate('Profile', {
-        //     firstName,
-        //     lastName,
-        //     email,
-        //     password,
-        //     linkedin,
-        //     jobRole,
-        //     preferences : selectedRoles
-        // })
     };
 
 
@@ -94,17 +89,41 @@ const SignUp = ({ navigation }) => {
         setSelectedRoles(selectedRoles.filter((r) => r !== role));
     };
 
-    const roles = [
-        'Developer',
-        'Data Scientist',
-        'Database Administrator',
-        'Computer Systems Analyst',
-        'Web Developer',
-        'DevOps Engineer',
-        'Network Engineer',
-        'IT Project Manager'
-    ]
-    
+    // const roles = [
+    //     'Developer',
+    //     'Data Scientist',
+    //     'Database Administrator',
+    //     'Computer Systems Analyst',
+    //     'Web Developer',
+    //     'DevOps Engineer',
+    //     'Network Engineer',
+    //     'IT Project Manager'
+    // ]
+
+    useEffect(() => {
+        const fetchRoles = async () => {
+            try {
+                console.log(`Api is fetching`)
+                const response = await axios.get('https://difficulties-machinery-editorials-advertisements.trycloudflare.com/api/user-profile/roles', {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                console.log(`api is successfully fetched`)
+                if (response.data.roles && Array.isArray(response.data.roles)) {
+                    setRoles(response.data.roles);
+                }
+            } catch (error) {
+                console.error('Failed to fetch roles:', error);
+            } finally {
+                setLoadingRoles(false);
+            }
+        };
+
+        fetchRoles();
+    }, []);
+
     return (
         <Provider>
             <View style={styles.container}>
@@ -172,7 +191,7 @@ const SignUp = ({ navigation }) => {
                                         <Text style={styles.roleText}>{role}</Text>
                                         <Checkbox.Android
                                             status={selectedRoles.includes(role) ? 'checked' : 'unchecked'}
-                                            color="#7680DE" // Optional: customize tick color
+                                            color="#7680DE"
                                         />
                                     </TouchableOpacity>
                                 ))}

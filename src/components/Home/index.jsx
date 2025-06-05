@@ -235,37 +235,21 @@ const groupEventsByMonth = (events) => {
     return result;
 };
 
-const Home = ({ route, navigation }) => {
-    const { firstName, lastName, email, password, linkedin, jobRole, preferences } = route.params;
+const Home = ({ navigation }) => {
+    // const { firstName, lastName, email, password, linkedin, jobRole, preferences } = route.params;
 
     const handleQRCode = () => {
-        navigation.navigate("QRCode", {
-            firstName,
-            lastName,
-            email,
-            password,
-            linkedin,
-            jobRole,
-            preferences
-        })
+        navigation.navigate("QRCode")
     }
 
     const handleProfile = () => {
-        navigation.navigate("UserProfile", {
-            firstName,
-            lastName,
-            email,
-            password,
-            linkedin,
-            jobRole,
-            preferences
-        })
+        navigation.navigate("UserProfile")
     }
 
     const eventData = [
         { name: "Tech Fest", organizer: "GIT,jaipur", date: "2024-05-13", lat: 50.9124, lon: 75.7873 },
         { name: "AI Summit", organizer: "codefiesta", date: "2024-04-12", lat: 26.9124, lon: 75.7873 },
-        { name: "Tech Fest2", organizer: "GIT,jaipur2", date: "2024-05-13", lat: 26.9124, lon: 75.7873 },
+        { name: "Tech Fest2", organizer: "GIT,jai   pur2", date: "2024-05-13", lat: 26.9124, lon: 75.7873 },
         { name: "AI Summit2", organizer: "codefiesta2", date: "2024-04-12", lat: 26.9124, lon: 75.7873 },
         { name: "Tech Fest3", organizer: "GIT,jaipur3", date: "2024-05-13", lat: 50.9124, lon: 75.7873 },
         { name: "AI Summit3", organizer: "codefiesta3", date: "2024-04-12", lat: 26.9124, lon: 75.7873 },
@@ -298,7 +282,7 @@ const Home = ({ route, navigation }) => {
 
 
     return (
-        <ImageBackground source={backgroundImage} style={styles.background} resizeMode="cover">
+        <View style={styles.background} resizeMode="cover">
             <SafeAreaView style={styles.container}>
                 <View style={styles.customHeader}>
                     <View style={{ flexDirection: "row", gap: 10 }}>
@@ -367,7 +351,7 @@ const Home = ({ route, navigation }) => {
                     <Text style={styles.bottomIconright}>👤</Text>
                 </TouchableOpacity>
             </View>
-        </ImageBackground>
+        </View>
     )
 
 };
@@ -379,6 +363,8 @@ const styles = StyleSheet.create({
     background: {
         flex: 1,
         resizeMode: "cover",
+        backgroundColor : "rgb(227, 235, 250)",
+        marginTop : 40
     },
     scrollView: {
         padding: 16,
@@ -446,7 +432,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#333",
         borderRadius: 20,
-        backgroundColor: "#D6D9FF",
+        backgroundColor: "rgb(201, 194, 241)",
         alignSelf: "center",
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
@@ -502,7 +488,7 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     card: {
-        backgroundColor: "#D6D9FF",
+        backgroundColor: "rgb(201, 194, 241)",
         padding: 16,
         width: 370,
         height: 90,

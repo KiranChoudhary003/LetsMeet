@@ -13,17 +13,9 @@ const Profile = ({ route, navigation}) => {
   console.log('firstname', firstName)
 
   const handleNext = () => {
-    navigation.navigate("Home" , {
-      firstName,
-      lastName,
-      email,
-      password,
-      linkedin,
-      jobRole,
-      preferences
-    })
+    navigation.navigate("Login")
   }
-
+  
   const handleEdit = () => {
     navigation.navigate("Edit" , {
       firstName,
@@ -135,7 +127,7 @@ const styles = StyleSheet.create({
   edit: {
     width: 118,
     height: 31,
-    backgroundColor: '#465BF3',
+    backgroundColor: '#7680DE',
     borderRadius: 10,
     color: 'white',
     display: 'flex',

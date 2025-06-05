@@ -12,8 +12,8 @@ import {
 
 const backgroundImage = require("../../assets/bgg.png");
 
-const CheckedInDescription = ({ navigation, route}) => {
-    const {name, organizer} = route.params
+const CheckedInDescription = ({ navigation, route }) => {
+    const { name, organizer } = route.params
 
     return (
         <ImageBackground source={backgroundImage} style={styles.background} resizeMode="cover">
@@ -46,19 +46,19 @@ const CheckedInDescription = ({ navigation, route}) => {
 
                     {/* Stats Section */}
                     <View style={styles.statsContainer}>
-    <View style={styles.statBox}>
-        <Text style={styles.statLabel}>Total connection made</Text>
-        <Text style={styles.statNumber}>15</Text>
-    </View>
-    <View style={styles.statBox}>
-        <Text style={styles.statLabel}>Requested</Text>
-        <Text style={styles.statNumber}>6</Text>
-    </View>
-    <View style={styles.statBox}>
-        <Text style={styles.statLabel}>Accepted</Text>
-        <Text style={styles.statNumber}>9</Text>
-    </View>
-</View>
+                        <View style={styles.statBox}>
+                            <Text style={styles.statLabel}>Total connection made</Text>
+                            <Text style={styles.statNumber}>15</Text>
+                        </View>
+                        <View style={styles.statBox}>
+                            <Text style={styles.statLabel}>Requested</Text>
+                            <Text style={styles.statNumber}>6</Text>
+                        </View>
+                        <View style={styles.statBox}>
+                            <Text style={styles.statLabel}>Accepted</Text>
+                            <Text style={styles.statNumber}>9</Text>
+                        </View>
+                    </View>
 
                 </ScrollView>
             </SafeAreaView>
@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
     background: {
         flex: 1,
         resizeMode: "cover",
+        marginTop: 40,
     },
     header: {
         flexDirection: "row",
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
         marginTop: 30,
         paddingHorizontal: 5,
     },
-    
+
     statBox: {
         flex: 1,
         marginHorizontal: 5,
@@ -151,7 +152,7 @@ const styles = StyleSheet.create({
         backgroundColor: "transparent",
         alignItems: "center",
     },
-    
+
     statLabel: {
         fontSize: 12,
         fontWeight: "500",
@@ -159,13 +160,13 @@ const styles = StyleSheet.create({
         textAlign: "center",
         marginBottom: 4,
     },
-    
+
     statNumber: {
         fontSize: 18,
         fontWeight: "bold",
         color: "#000",
     },
-    
+
 });
 
 export default CheckedInDescription;

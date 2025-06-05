@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Easing,Image } from "react-native";
+import { Easing, Image } from "react-native";
 
 import {
   ScrollView,
@@ -216,7 +216,7 @@ const EventsScreen = ({ navigation }) => {
   };
 
   return (
-    <ImageBackground source={backgroundImage} style={styles.background} resizeMode="cover">
+    <View source={backgroundImage} style={styles.background} resizeMode="cover">
       <SafeAreaView style={styles.container}>
         <View style={styles.customHeader}>
           <View style={{ flexDirection: "row", gap: 10 }}>
@@ -283,7 +283,7 @@ const EventsScreen = ({ navigation }) => {
           <Text style={styles.bottomIconright}>👤</Text>
         </TouchableOpacity>
       </View>
-    </ImageBackground>
+    </View>
   );
 };
 
@@ -294,6 +294,8 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     resizeMode: "cover",
+    backgroundColor: "rgb(227, 235, 250)",
+    marginTop: 40,
   },
   scrollView: {
     padding: 16,
@@ -338,7 +340,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#333",
     borderRadius: 20,
-    backgroundColor: "#D6D9FF",
+    backgroundColor: "rgb(201, 194, 241)",
     alignSelf: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -383,7 +385,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   card: {
-    backgroundColor: "#D6D9FF",
+    backgroundColor: "rgb(201, 194, 241)",
     padding: 16,
     width: 370,
     height: 90,

@@ -118,5 +118,5 @@ dependencies {
     }
 
     // Force use of a specific variant of react-native-camera
-    implementation(project(path: ":react-native-camera", configuration: "generalRelease"))
+    // implementation(project(path: ":react-native-camera", configuration: "generalRelease"))
 }

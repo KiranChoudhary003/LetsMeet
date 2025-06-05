@@ -147,6 +147,7 @@ const styles = StyleSheet.create({
     background: {
         flex: 1,
         resizeMode: "cover",
+        marginTop : 40,
     },
     header: {
         flexDirection: "row",
